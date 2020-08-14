@@ -14,11 +14,13 @@
     "@koa/cors": "^3.1.0",
     "@koa/router": "^9.3.1",
     "argon2": "^0.26.2",
+    "axios": "^0.19.2",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.0",
     "koa-bodyparser": "^4.3.0",
     "koa-jwt": "^4.0.0",
     "mysql": "^2.18.1",
+    "qr-image": "^3.2.0",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.2.25"
   },

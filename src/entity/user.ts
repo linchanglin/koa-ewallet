@@ -25,7 +25,7 @@ export class User {
   binding_title: string;
   
   @Column()
-  pinding_account_number: string;
+  bank_account_number: string;
 
   @Column("decimal", { precision: 12, scale: 2 })
   pay_amount_limit: number;

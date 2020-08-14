@@ -26,7 +26,16 @@ const unprotectedRouter = new Router();
 // auth 相关的路由
 unprotectedRouter.post('/auth/login', AuthController.login);
 unprotectedRouter.post('/auth/register', AuthController.register);
+
 unprotectedRouter.get('/test', AuthController.test);
+
+unprotectedRouter.post('/deposit', EwalletController.bindAccountNumber);
+unprotectedRouter.get('/ewallet', EwalletController.getBalance);
+unprotectedRouter.patch('/ewallet', EwalletController.topUp);
+unprotectedRouter.get('/user_qrcode', EwalletController.getUserQrcode);
+
+
+
 
 const protectedRouter = new Router();
 
@@ -37,7 +46,6 @@ protectedRouter.put('/users/:id', UserController.updateUser);
 protectedRouter.delete('/users/:id', UserController.deleteUser);
 
 
-unprotectedRouter.get('/ewallet/:user_id', EwalletController.balance);
 
 // ewallet 相关的路由
 
