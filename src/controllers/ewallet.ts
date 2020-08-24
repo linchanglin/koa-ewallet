@@ -4,14 +4,14 @@ import { getManager } from 'typeorm';
 
 import { Ewallet } from '../entity/ewallet';
 import { User } from '../entity/user';
-import { getTokenUserId, generateQrcode} from '../utils/util'
+import { getTokenUserId, generateQrcode } from '../utils/util'
 
 import { NotFoundException, ForbiddenException } from '../exceptions';
 
 import { bindAccountNumber, topUpFromAccountNumber, topUpToAccountNumber } from '../api/api'
 
-function bindAN(params:any, userId: any) {
-  return new Promise((resolve,reject) => {
+function bindAN(params: any, userId: any) {
+  return new Promise((resolve, reject) => {
     bindAccountNumber(params).then(async res => {
       // console.log('res', res)
       if (res.data.code == '202001') {
@@ -23,16 +23,16 @@ function bindAN(params:any, userId: any) {
       } else {
         reject('bind fail')
       }
-    }).catch(err=> {
+    }).catch(err => {
       reject('bind fail')
     })
   })
- 
+
 }
 
-function topUpFromAN(params:any) {
+function topUpFromAN(params: any) {
   console.log('topUpFromAN')
-  return new Promise((resolve,reject) => {
+  return new Promise((resolve, reject) => {
     topUpFromAccountNumber(params).then(async res => {
       // console.log('res', res)
       if (res.data.code == '200') {
@@ -40,16 +40,16 @@ function topUpFromAN(params:any) {
       } else {
         reject('topUpFrom fail')
       }
-    }).catch(err=> {
+    }).catch(err => {
       reject('topUpFrom fail')
     })
   })
- 
+
 }
 
-function topUpToAN(params:any) {
+function topUpToAN(params: any) {
   console.log('topUpToAN')
-  return new Promise((resolve,reject) => {
+  return new Promise((resolve, reject) => {
     topUpToAccountNumber(params).then(async res => {
       // console.log('res', res)
       if (res.data.code == '200') {
@@ -57,11 +57,11 @@ function topUpToAN(params:any) {
       } else {
         reject('topUpTo fail')
       }
-    }).catch(err=> {
+    }).catch(err => {
       reject('topUpTo fail')
     })
   })
- 
+
 }
 
 export default class EwalletController {
@@ -83,7 +83,7 @@ export default class EwalletController {
         success: true,
         errorMessage: '绑定成功'
       };
-    } catch(err) {
+    } catch (err) {
       console.log('err is ->', err);
       ctx.status = 200;
       ctx.body = {
@@ -119,7 +119,7 @@ export default class EwalletController {
       await topUpToAN(toParams)
 
       const ewalletRepository = getManager().getRepository(Ewallet);
-      const query:any = { user_id: userId}
+      const query: any = { user_id: userId }
       const ewallet: any = await ewalletRepository.findOne(query);
       ewallet.balance = +(ewallet.balance) + amount
       ewalletRepository.save(ewallet)
@@ -127,9 +127,9 @@ export default class EwalletController {
       ctx.status = 200;
       ctx.body = {
         success: true,
-        errorMessage: `充值成功 ${amount} HKD` 
+        errorMessage: `充值成功 ${amount} HKD`
       };
-    } catch(err) {
+    } catch (err) {
       console.log('err is ->', err);
       ctx.status = 200;
       ctx.body = {
@@ -137,7 +137,7 @@ export default class EwalletController {
         errorMessage: '充值失败'
       };
     }
-    
+
 
 
   }
@@ -145,19 +145,18 @@ export default class EwalletController {
 
   public static async getBalance(ctx: Context) {
     const userId = getTokenUserId(ctx.request.header.token)
-    console.log('userId', userId)
-
     const ewalletRepository = getManager().getRepository(Ewallet);
-    const ewallet = await ewalletRepository.findOne(+userId);
-  
-      if (ewallet) {
-        ctx.status = 200;
-        ctx.body = {
-          balance: ewallet.balance
-        };
-      } else {
-        throw new NotFoundException();
-      }
+    const query = { user_id: +userId }
+    const ewallet = await ewalletRepository.findOne(query);
+
+    if (ewallet) {
+      ctx.status = 200;
+      ctx.body = {
+        balance: ewallet.balance
+      };
+    } else {
+      throw new NotFoundException();
+    }
   }
 
   public static async getUserQrcode(ctx: Context) {
@@ -166,7 +165,7 @@ export default class EwalletController {
     const user: any = await userRepository.findOne(userId);
     const bankAN = user.bank_account_number
     const params = { bank_account_number: bankAN }
-  
+
     const qrcode = generateQrcode(JSON.stringify(params))
 
     ctx.status = 200;
@@ -176,5 +175,5 @@ export default class EwalletController {
   }
 
 
-      
+
 }
